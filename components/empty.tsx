@@ -1,3 +1,4 @@
+import { UseProContext } from "@/context/use-pro-model";
 import { RecycleIcon } from "lucide-react";
 import Image from "next/image";
 

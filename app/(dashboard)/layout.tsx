@@ -1,18 +1,25 @@
 import { NavBar } from "@/components/NavBar";
 import { SideBar } from "@/components/SideBar";
-const DashBoardLayout = ({ children }: { children: React.ReactNode }) => {
+import { ModalProvider } from "@/components/modal-provider";
+import { UseProProvider } from "@/context/use-pro-model";
+import { getApiLimitCount } from "@/lib/api-limit";
+const DashBoardLayout = async ({ children }: { children: React.ReactNode }) => {
+  const apiLimitCount = await getApiLimitCount();
   return (
-    <div className="relative h-full">
-      <div
-        className="z-[80] hidden h-full bg-gray-900 md:fixed
+    <UseProProvider>
+      <ModalProvider />
+      <div className="relative h-full">
+        <div
+          className=" hidden h-full bg-gray-900 md:fixed
         md:inset-y-0 md:flex md:w-72 md:flex-col"
-      >
-        <SideBar />
+        >
+          <SideBar apiLimitCount={apiLimitCount} />
+        </div>
+        <main className="md:pl-72">
+          <NavBar /> {children}
+        </main>
       </div>
-      <main className="md:pl-72">
-        <NavBar /> {children}
-      </main>
-    </div>
+    </UseProProvider>
   );
 };
 export default DashBoardLayout;
