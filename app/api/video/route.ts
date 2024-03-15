@@ -1,3 +1,4 @@
+import { checkApiLimit, increaseApiLimit } from "@/lib/api-limit";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import Replicate from "replicate";
@@ -20,6 +21,11 @@ export async function POST(req: Request) {
       return new NextResponse("Messages are required", { status: 400 });
     }
 
+    const freeTrial = await checkApiLimit();
+    if (!freeTrial) {
+      return new NextResponse("Free Trail is completed", { status: 403 });
+    }
+
     const response = await replicate.run(
       "lucataco/animate-diff:beecf59c4aee8d81bf04f0381033dfa10dc16e845b4ae00d281e2fa377e48a9f",
       {
@@ -37,6 +43,8 @@ export async function POST(req: Request) {
     );
 
     console.log(response);
+
+    await increaseApiLimit();
 
     return NextResponse.json(response);
   } catch (error) {
