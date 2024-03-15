@@ -58,12 +58,7 @@ const routes = [
     href: "/code",
     color: "text-green-700",
   },
-  {
-    label: "Meme Generation",
-    icon: FileImage,
-    href: "/meme",
-    color: "text-pink-700",
-  },
+
   {
     label: "Settings",
     icon: Settings,

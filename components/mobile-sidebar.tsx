@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 
 export const MobileSidebar = () => {
   const [isMounted, setIsMounted] = useState(false);
-
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -23,7 +22,7 @@ export const MobileSidebar = () => {
         </Button>
       </SheetTrigger>
       <SheetContent side={"left"} className="p-0">
-        <SideBar />
+        <SideBar apiLimitCount={2} />
       </SheetContent>
     </Sheet>
   );
