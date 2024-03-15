@@ -10,11 +10,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loader";
+import { UseProContext } from "@/context/use-pro-model";
 
 const MusicGenerationPage = () => {
+  const { setIsOpen } = useContext(UseProContext);
   const router = useRouter();
   const [music, setMusic] = useState<string>();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -32,6 +34,7 @@ const MusicGenerationPage = () => {
       setMusic(response.data.audio);
       form.reset();
     } catch (error: any) {
+      setIsOpen(true);
       console.log(error);
     } finally {
       router.refresh();

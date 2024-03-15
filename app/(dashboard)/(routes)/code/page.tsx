@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { ChatCompletionRequestMessage } from "openai";
 import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loader";
@@ -18,8 +18,10 @@ import { cn } from "@/lib/utils";
 import { UserAvatar } from "@/components/user-avatar";
 import { BotAvator } from "@/components/bot-avator";
 import ReactMarkDown from "react-markdown";
+import { UseProContext } from "@/context/use-pro-model";
 
-const ConversationPage = () => {
+const CodeGenerationPage = () => {
+  const { setIsOpen } = useContext(UseProContext);
   const router = useRouter();
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -43,6 +45,7 @@ const ConversationPage = () => {
       setMessages((c) => [...c, promptRequest, response.data]);
       form.reset();
     } catch (error: any) {
+      setIsOpen(true);
       console.log(error);
     } finally {
       router.refresh();
@@ -146,4 +149,4 @@ const ConversationPage = () => {
     </div>
   );
 };
-export default ConversationPage;
+export default CodeGenerationPage;

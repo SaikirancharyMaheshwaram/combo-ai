@@ -10,11 +10,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loader";
+import { UseProContext } from "@/context/use-pro-model";
 
 const VideoGenerationPage = () => {
+  const { setIsOpen } = useContext(UseProContext);
   const router = useRouter();
   const [video, setVideo] = useState<string>();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -33,7 +35,8 @@ const VideoGenerationPage = () => {
       setVideo(response.data);
       form.reset();
     } catch (error: any) {
-      console.log(error);
+      setIsOpen(true);
+      //console.log(error);
     } finally {
       router.refresh();
     }

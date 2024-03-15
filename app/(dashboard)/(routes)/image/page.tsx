@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loader";
@@ -25,7 +25,9 @@ import {
 import { cn } from "@/lib/utils";
 import { Card, CardFooter } from "@/components/ui/card";
 import Image from "next/image";
+import { UseProContext } from "@/context/use-pro-model";
 const ImageGenerationPage = () => {
+  const { setIsOpen } = useContext(UseProContext);
   const router = useRouter();
   const [images, setImages] = useState<string[]>([]);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -47,7 +49,8 @@ const ImageGenerationPage = () => {
       setImages(urls);
       form.reset();
     } catch (error: any) {
-      console.log(error);
+      setIsOpen(true);
+      // console.log(error);
     } finally {
       router.refresh();
     }
