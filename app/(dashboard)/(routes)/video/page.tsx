@@ -1,7 +1,7 @@
 "use client";
 import * as z from "zod";
 import { Heading } from "@/components/Heading";
-import { Music } from "lucide-react";
+import { Music, VideoIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { formSchema } from "./constants";
@@ -14,9 +14,9 @@ import { useState } from "react";
 import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loader";
 
-const MusicGenerationPage = () => {
+const VideoGenerationPage = () => {
   const router = useRouter();
-  const [music, setMusic] = useState<string>();
+  const [video, setVideo] = useState<string>();
   const form = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
       prompt: "",
@@ -27,9 +27,10 @@ const MusicGenerationPage = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      setMusic(undefined);
-      const response = await axios.post("/api/music", values);
-      setMusic(response.data.audio);
+      setVideo(undefined);
+      const response = await axios.post("/api/video", values);
+      console.log(response);
+      setVideo(response.data);
       form.reset();
     } catch (error: any) {
       console.log(error);
@@ -40,9 +41,9 @@ const MusicGenerationPage = () => {
   return (
     <div>
       <Heading
-        title="Music Generation"
-        description="Turn your Concept to Concert"
-        icon={Music}
+        title="Video Generation"
+        description="Turn your visualization to Video"
+        icon={VideoIcon}
         iconColor="text-emerald-700"
         bgColor="bg-emerald-700/10"
       />
@@ -95,19 +96,22 @@ const MusicGenerationPage = () => {
               <Loader />
             </div>
           )}
-          {!music && !isLoading && (
+          {!video && !isLoading && (
             <div>
               <Empty label="Start the Conversation" />
             </div>
           )}
-          {music && (
-            <audio controls className="mt-8 w-full ">
-              <source src={music} />
-            </audio>
+          {video && (
+            <video
+              controls
+              className="mt-8 aspect-video w-full rounded-lg border bg-black "
+            >
+              <source src={video} />
+            </video>
           )}
         </div>
       </div>
     </div>
   );
 };
-export default MusicGenerationPage;
+export default VideoGenerationPage;
