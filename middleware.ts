@@ -7,7 +7,7 @@ export default authMiddleware({
     "/",
     "/sign-up",
     "/sign-in",
-    "/api/conversation",
+    "/api/webhook",
   ],
   // Routes that can always be accessed, and have
   // no authentication information

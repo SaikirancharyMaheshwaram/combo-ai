@@ -1,4 +1,5 @@
-import { checkApiLimit, increaseApiLimit } from "@/lib/api-limit";
+import { increaseApiLimit } from "@/lib/api-limit";
+import { checkSubcription } from "@/lib/subsciption";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import Replicate from "replicate";
@@ -9,6 +10,7 @@ const replicate = new Replicate({
 
 export async function POST(req: Request) {
   try {
+    const isPro = await checkSubcription();
     const { userId } = auth();
     const body = await req.json();
     const { prompt } = body;
@@ -21,8 +23,8 @@ export async function POST(req: Request) {
       return new NextResponse("Messages are required", { status: 400 });
     }
 
-    const freeTrial = await checkApiLimit();
-    if (!freeTrial) {
+    // const freeTrial = await checkApiLimit();
+    if (!isPro) {
       return new NextResponse("Free Trail is completed", { status: 403 });
     }
 
@@ -43,8 +45,9 @@ export async function POST(req: Request) {
     );
 
     console.log(response);
-
-    await increaseApiLimit();
+    if (!isPro) {
+      await increaseApiLimit();
+    }
 
     return NextResponse.json(response);
   } catch (error) {

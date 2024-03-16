@@ -1,34 +1,31 @@
 import { auth, currentUser } from "@clerk/nextjs";
-
 import { NextResponse } from "next/server";
 import db from "@/lib/db";
 import { stripe } from "@/lib/stripe";
 import { absoluteUrl } from "@/lib/utils";
-
+export const dynamic = "force-dynamic";
 const settingsUrl = absoluteUrl("/settings");
-
 export async function GET() {
   try {
     const { userId } = auth();
     const user = await currentUser();
 
-    if (!user || !userId) {
-      return new NextResponse("UnAuthorized", { status: 401 });
+    if (!userId || !user) {
+      return new NextResponse("Unauthorized", { status: 401 });
     }
-    //checking that user is already subscriped
-    const userSubsciption = await db.userSubscription.findUnique({
+    const userSubscription = await db.userSubscription.findUnique({
       where: {
         userId,
       },
     });
 
-    if (userSubsciption && userSubsciption.stripeCustomerId) {
-      const striptSession = await stripe.billingPortal.sessions.create({
-        customer: userSubsciption.stripeCustomerId,
+    if (userSubscription && userSubscription.stripeCustomerId) {
+      const stripeSession = await stripe.billingPortal.sessions.create({
+        customer: userSubscription.stripeCustomerId,
         return_url: settingsUrl,
       });
 
-      return NextResponse.json({ url: striptSession.url });
+      return new NextResponse(JSON.stringify({ url: stripeSession.url }));
     }
 
     const stripeSession = await stripe.checkout.sessions.create({
@@ -41,12 +38,12 @@ export async function GET() {
       line_items: [
         {
           price_data: {
-            currency: "INR",
+            currency: "USD",
             product_data: {
-              name: "Combo-ai",
-              description: "Use the AI Generator to Fullest",
+              name: "ComboAI Pro",
+              description: "Use AI Generations to Fullest",
             },
-            unit_amount: 2000,
+            unit_amount: 10000,
             recurring: {
               interval: "month",
             },
@@ -59,8 +56,9 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json({ url: stripeSession.url });
+    return new NextResponse(JSON.stringify({ url: stripeSession.url }));
   } catch (error) {
     console.log("[STRIPE_ERROR]", error);
+    return new NextResponse("Internal Error", { status: 500 });
   }
 }

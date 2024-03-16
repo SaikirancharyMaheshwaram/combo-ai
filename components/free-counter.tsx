@@ -1,16 +1,29 @@
+"use client";
 import { MAX_FREE_COUNTS } from "@/constants";
 import { Card, CardContent } from "./ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "./ui/button";
 import { Zap } from "lucide-react";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UseProContext } from "@/context/use-pro-model";
 
 interface FreecounterProps {
   apiLimitCount: number;
+  isPro: boolean;
 }
-export const FreeCounter = ({ apiLimitCount }: FreecounterProps) => {
-  const { isOpen, setIsOpen } = useContext(UseProContext);
+export const FreeCounter = ({ apiLimitCount, isPro }: FreecounterProps) => {
+  const { setIsOpen } = useContext(UseProContext);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  if (!mounted) {
+    return null;
+  }
+  if (isPro) {
+    return null;
+  }
   return (
     <div className="px-3">
       <Card className="border-0 bg-white/10">

@@ -7,14 +7,28 @@ import {
   DialogDescription,
   DialogHeader,
 } from "./ui/dialog";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { UseProContext } from "@/context/use-pro-model";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Zap } from "lucide-react";
+import axios from "axios";
 
 export const ProModal = () => {
   const { isOpen, setIsOpen } = useContext(UseProContext);
+  const [loading, setLoading] = useState(false);
+
+  const onSubscribe = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get("/api/stripe");
+      window.location.href = response.data.url;
+    } catch (error) {
+      console.log(error, "STRIPE_CLIENT_ERROR");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={() => setIsOpen(false)}>
@@ -29,7 +43,12 @@ export const ProModal = () => {
             </div>
           </DialogTitle>
           <DialogDescription className="space-y-2 pt-2 text-center">
-            <Button variant={"custom"} className="font-semibold text-white">
+            <Button
+              variant={"custom"}
+              onClick={onSubscribe}
+              disabled={loading}
+              className="font-semibold text-white"
+            >
               <Zap className="mr-2 h-4 w-4 fill-white" />
               Get Premium
             </Button>

@@ -1,4 +1,5 @@
 import { checkApiLimit, increaseApiLimit } from "@/lib/api-limit";
+import { checkSubcription } from "@/lib/subsciption";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { Configuration, OpenAIApi, ChatCompletionRequestMessage } from "openai";
@@ -17,6 +18,7 @@ const openai = new OpenAIApi(configuration);
 
 export async function POST(req: Request) {
   try {
+    const isPro = await checkSubcription();
     const { userId } = auth();
     const body = await req.json();
     const { messages } = body;
@@ -36,7 +38,7 @@ export async function POST(req: Request) {
     }
 
     const freeTrial = await checkApiLimit();
-    if (!freeTrial) {
+    if (!freeTrial && !isPro) {
       return new NextResponse("Free Trail is completed", { status: 403 });
     }
 
@@ -45,7 +47,9 @@ export async function POST(req: Request) {
       messages: [instructionMessage, ...messages],
     });
 
-    await increaseApiLimit();
+    if (!isPro) {
+      await increaseApiLimit();
+    }
 
     return NextResponse.json(response.data.choices[0].message);
   } catch (error) {
