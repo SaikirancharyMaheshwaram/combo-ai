@@ -14,6 +14,7 @@ import { useContext, useState } from "react";
 import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loader";
 import { UseProContext } from "@/context/use-pro-model";
+import toast from "react-hot-toast";
 
 const MusicGenerationPage = () => {
   const { setIsOpen } = useContext(UseProContext);
@@ -34,8 +35,11 @@ const MusicGenerationPage = () => {
       setMusic(response.data.audio);
       form.reset();
     } catch (error: any) {
-      setIsOpen(true);
-      console.log(error);
+      if (error?.response?.status === 403) {
+        setIsOpen(true);
+      } else {
+        toast.error("something went wrong");
+      }
     } finally {
       router.refresh();
     }

@@ -26,6 +26,7 @@ import { cn } from "@/lib/utils";
 import { Card, CardFooter } from "@/components/ui/card";
 import Image from "next/image";
 import { UseProContext } from "@/context/use-pro-model";
+import toast from "react-hot-toast";
 const ImageGenerationPage = () => {
   const { setIsOpen } = useContext(UseProContext);
   const router = useRouter();
@@ -49,7 +50,11 @@ const ImageGenerationPage = () => {
       setImages(urls);
       form.reset();
     } catch (error: any) {
-      setIsOpen(true);
+      if (error?.response?.status === 403) {
+        setIsOpen(true);
+      } else {
+        toast.error("something went wrong");
+      }
       // console.log(error);
     } finally {
       router.refresh();

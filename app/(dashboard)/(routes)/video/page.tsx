@@ -14,6 +14,7 @@ import { useContext, useState } from "react";
 import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loader";
 import { UseProContext } from "@/context/use-pro-model";
+import toast from "react-hot-toast";
 
 const VideoGenerationPage = () => {
   const { setIsOpen } = useContext(UseProContext);
@@ -35,7 +36,11 @@ const VideoGenerationPage = () => {
       setVideo(response.data);
       form.reset();
     } catch (error: any) {
-      setIsOpen(true);
+      if (error?.response?.status === 403) {
+        setIsOpen(true);
+      } else {
+        toast.error("something went wrong");
+      }
       //console.log(error);
     } finally {
       router.refresh();

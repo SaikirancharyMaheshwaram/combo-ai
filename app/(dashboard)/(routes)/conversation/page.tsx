@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { UserAvatar } from "@/components/user-avatar";
 import { BotAvator } from "@/components/bot-avator";
 import { UseProContext } from "@/context/use-pro-model";
+import toast from "react-hot-toast";
 
 const ConversationPage = () => {
   const { setIsOpen } = useContext(UseProContext);
@@ -47,8 +48,10 @@ const ConversationPage = () => {
     } catch (error: any) {
       //catching the 403 error
       console.log({ supereoor: error });
-      if (error?.response.status === 403) {
+      if (error?.response?.status === 403) {
         setIsOpen(true);
+      } else {
+        toast.error("something went wrong");
       }
     } finally {
       router.refresh();

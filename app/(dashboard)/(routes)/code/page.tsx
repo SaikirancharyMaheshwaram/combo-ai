@@ -19,6 +19,7 @@ import { UserAvatar } from "@/components/user-avatar";
 import { BotAvator } from "@/components/bot-avator";
 import ReactMarkDown from "react-markdown";
 import { UseProContext } from "@/context/use-pro-model";
+import toast from "react-hot-toast";
 
 const CodeGenerationPage = () => {
   const { setIsOpen } = useContext(UseProContext);
@@ -45,8 +46,11 @@ const CodeGenerationPage = () => {
       setMessages((c) => [...c, promptRequest, response.data]);
       form.reset();
     } catch (error: any) {
-      setIsOpen(true);
-      console.log(error);
+      if (error?.response?.status === 403) {
+        setIsOpen(true);
+      } else {
+        toast.error("something went wrong");
+      }
     } finally {
       router.refresh();
     }

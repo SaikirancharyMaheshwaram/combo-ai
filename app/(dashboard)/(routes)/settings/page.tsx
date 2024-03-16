@@ -8,14 +8,14 @@ const SettingsPage = async () => {
   return (
     <div>
       <Heading title="Settings" description="subscribe" icon={Settings} />
-      <div className="space-y-4 px-4 lg:px-8">
+      <div className="flex flex-col items-center justify-center space-y-4 px-4 lg:px-8">
         <div className="">
           {isSubscriped ? (
-            <div>
+            <div className="flex flex-col items-center justify-center">
               <Zap /> <p>Your are Pro</p>
             </div>
           ) : (
-            <div>
+            <div className="flex flex-col items-center justify-center">
               <Bot /> <p>You are in Bot plan</p>
             </div>
           )}
